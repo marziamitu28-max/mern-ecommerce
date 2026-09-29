@@ -20,10 +20,10 @@ exports.signup=async(req,res)=>{
         const hashedPassword=await bcrypt.hash(req.body.password,10)
         req.body.password=hashedPassword
 
-        // creating new user
-        const createdUser=new User(req.body)
-        await createdUser.save()
-
+         // creating new user
+    req.body.isVerified = true // <--- ADD THIS EXACT LINE HERE
+    const createdUser=new User(req.body)
+    await createdUser.save()
         // getting secure user info
         const secureInfo=sanitizeUser(createdUser)
 
@@ -128,21 +128,21 @@ exports.resendOtp=async(req,res)=>{
             return res.status(404).json({"message":"User not found"})
         }
 
-        await Otp.deleteMany({user:existingUser._id})
+       // await Otp.deleteMany({user:existingUser._id})
 
-        const otp=generateOTP()
-        const hashedOtp=await bcrypt.hash(otp,10)
+       // const otp=generateOTP()
+        //const hashedOtp=await bcrypt.hash(otp,10)
 
-        const newOtp=new Otp({user:req.body.user,otp:hashedOtp,expiresAt:Date.now()+parseInt(process.env.OTP_EXPIRATION_TIME)})
-        await newOtp.save()
+        //const newOtp=new Otp({user:req.body.user,otp:hashedOtp,expiresAt:Date.now()+parseInt(process.env.OTP_EXPIRATION_TIME)})
+       // await newOtp.save()
 
-        await sendMail(existingUser.email,`OTP Verification for Your MERN-AUTH-REDUX-TOOLKIT Account`,`Your One-Time Password (OTP) for account verification is: <b>${otp}</b>.</br>Do not share this OTP with anyone for security reasons`)
+       // await sendMail(existingUser.email,`OTP Verification for Your MERN-AUTH-REDUX-TOOLKIT Account`,`Your One-Time Password (OTP) for account verification is: <b>${otp}</b>.</br>Do not share this OTP with anyone for security reasons`)
 
-        res.status(201).json({'message':"OTP sent"})
-    } catch (error) {
-        res.status(500).json({'message':"Some error occured while resending otp, please try again later"})
-        console.log(error);
-    }
+        //res.status(201).json({'message':"OTP sent"})
+    //} catch (error) {
+      //  res.status(500).json({'message':"Some error occured while resending otp, please try again later"})
+      //  console.log(error);
+    //}
 }
 
 exports.forgotPassword=async(req,res)=>{
