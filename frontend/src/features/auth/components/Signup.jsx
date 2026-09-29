@@ -24,7 +24,7 @@ export const Signup = () => {
   // handles user redirection
   useEffect(()=>{
     if(loggedInUser && !loggedInUser?.isVerified){
-      navigate("/verify-otp")
+      navigate("/login")
     }
     else if(loggedInUser){
       navigate("/")
@@ -41,9 +41,11 @@ export const Signup = () => {
 
   
   useEffect(()=>{
-    if(status==='fullfilled'){
-      toast.success("Welcome! Verify your email to start shopping on mern-ecommerce.")
+       if(status==='fulfilled'){
+      toast.success("Welcome! Account created successfully. You can now login.")
       reset()
+    }
+
     }
     return ()=>{
       dispatch(clearSignupError())
