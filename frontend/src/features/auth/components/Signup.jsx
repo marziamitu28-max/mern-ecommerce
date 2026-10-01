@@ -41,12 +41,11 @@ export const Signup = () => {
 
   
   useEffect(()=>{
-       if(status==='fulfilled'){
-      toast.success("Welcome! Account created successfully. You can now login.")
-      reset()
-    }
-
-    }
+       if (status === 'fulfilled') {
+  toast.success("Welcome! Account created successfully. You can now login.");
+  reset();
+  }
+}, [status])
     return ()=>{
       dispatch(clearSignupError())
       dispatch(resetSignupStatus())
