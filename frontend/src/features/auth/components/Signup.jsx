@@ -46,26 +46,23 @@ export const Signup = () => {
   reset();
   }
 }, [status])
-    return ()=>{
+       return () => {
       dispatch(clearSignupError())
       dispatch(resetSignupStatus())
     }
-  },[status])
-
+  }, [dispatch])
   // this function handles signup and dispatches the signup action with credentails that api requires
-  const handleSignup=(data)=>{
-    const cred={...data}
+const handleSignup=(data)=>{
+    const cred = { ...data };
     delete cred.confirmPassword
     dispatch(signupAsync(cred))
   }
-
   return (
     <Stack width={'100vw'} height={'100vh'} flexDirection={'row'} sx={{overflowY:"hidden"}}>
 
       {
-        !is900 &&
-
-        <Stack bgcolor={'black'} flex={1} justifyContent={'center'} >
+          return (
+      <Stack bgcolor={'black'} flex={1} justifyContent={'center'} >
           <Lottie animationData={ecommerceOutlookAnimation}/>
         </Stack>
         
