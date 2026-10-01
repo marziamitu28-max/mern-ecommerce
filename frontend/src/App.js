@@ -28,7 +28,7 @@ function App() {
       <>
         <Route path='/signup' element={<SignupPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/verify-otp' element={<OtpVerificationPage/>}/>
+      <Route path='/verify-otp' element={<LoginPage/>}/>
         <Route path='/forgot-password' element={<ForgotPasswordPage/>}/>
         <Route path='/reset-password/:userId/:passwordResetToken' element={<ResetPasswordPage/>}/>
         <Route exact path='/logout' element={<Protected><Logout/></Protected>}/>
