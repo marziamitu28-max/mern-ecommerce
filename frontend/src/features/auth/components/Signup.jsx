@@ -1,4 +1,4 @@
-import {FormHelperText, Stack, TextField, Typography,Box, useTheme, useMediaQuery} from '@mui/material'
+/*import {FormHelperText, Stack, TextField, Typography,Box, useTheme, useMediaQuery} from '@mui/material'
 import React, { useEffect } from 'react'
 import Lottie from 'lottie-react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -121,4 +121,323 @@ const handleSignup=(data)=>{
 
         </Stack>
     </Stack>
-  )
+  )*/
+import React, { useEffect } from "react";
+import {
+  FormHelperText,
+  Stack,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import Lottie from "lottie-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { LoadingButton } from "@mui/lab";
+import { MotionConfig, motion } from "framer-motion";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+
+import { ecommerceOutlookAnimation } from "../../../assets";
+
+import {
+  selectLoggedInUser,
+  signupAsync,
+  selectSignupStatus,
+  selectSignupError,
+  clearSignupError,
+  resetSignupStatus,
+} from "../AuthSlice";
+
+export const Signup = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const theme = useTheme();
+
+  const is480 = useMediaQuery(theme.breakpoints.down("480px"));
+
+  const status = useSelector(selectSignupStatus);
+  const error = useSelector(selectSignupError);
+  const loggedInUser = useSelector(selectLoggedInUser);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  // Redirect user after authentication state changes
+  useEffect(() => {
+    if (!loggedInUser) return;
+
+    if (!loggedInUser.isVerified) {
+      navigate("/login");
+    } else {
+      navigate("/");
+    }
+  }, [loggedInUser, navigate]);
+
+  // Display signup errors
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || "Signup failed");
+    }
+  }, [error]);
+
+  // Handle successful signup
+  useEffect(() => {
+    if (status === "fulfilled") {
+      toast.success(
+        "Welcome! Account created successfully. You can now login."
+      );
+
+      reset();
+    }
+  }, [status, reset]);
+
+  // Cleanup Redux signup state when component unmounts
+  useEffect(() => {
+    return () => {
+      dispatch(clearSignupError());
+      dispatch(resetSignupStatus());
+    };
+  }, [dispatch]);
+
+  // Handle signup
+  const handleSignup = (data) => {
+    const { confirmPassword, ...credentials } = data;
+
+    dispatch(signupAsync(credentials));
+  };
+
+  return (
+    <Stack
+      width="100vw"
+      height="100vh"
+      direction="row"
+      sx={{
+        overflowY: "hidden",
+      }}
+    >
+      {/* Left side animation */}
+      <Stack
+        bgcolor="black"
+        flex={1}
+        justifyContent="center"
+        sx={{
+          display: {
+            xs: "none",
+            md: "flex",
+          },
+        }}
+      >
+        <Lottie animationData={ecommerceOutlookAnimation} />
+      </Stack>
+
+      {/* Signup form */}
+      <Stack
+        flex={1}
+        justifyContent="center"
+        alignItems="center"
+        px={2}
+      >
+        {/* Logo / Brand */}
+        <Stack
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Stack rowGap="0.4rem">
+            <Typography
+              variant="h2"
+              fontWeight={600}
+              sx={{
+                wordBreak: "break-word",
+              }}
+            >
+              Mern Shop
+            </Typography>
+
+            <Typography
+              alignSelf="flex-end"
+              color="GrayText"
+              variant="body2"
+            >
+              - Shop Anything
+            </Typography>
+          </Stack>
+        </Stack>
+
+        {/* Form */}
+        <Stack
+          mt={4}
+          spacing={2}
+          width={is480 ? "95vw" : "28rem"}
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(handleSignup)}
+        >
+          <MotionConfig
+            whileHover={{ y: -5 }}
+          >
+            {/* Username */}
+            <motion.div>
+              <TextField
+                fullWidth
+                placeholder="Username"
+                {...register("name", {
+                  required: "Username is required",
+                })}
+              />
+
+              {errors.name && (
+                <FormHelperText error>
+                  {errors.name.message}
+                </FormHelperText>
+              )}
+            </motion.div>
+
+            {/* Email */}
+            <motion.div>
+              <TextField
+                fullWidth
+                type="email"
+                placeholder="Email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email",
+                  },
+                })}
+              />
+
+              {errors.email && (
+                <FormHelperText error>
+                  {errors.email.message}
+                </FormHelperText>
+              )}
+            </motion.div>
+
+            {/* Password */}
+            <motion.div>
+              <TextField
+                fullWidth
+                type="password"
+                placeholder="Password"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+                    message:
+                      "Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number",
+                  },
+                })}
+              />
+
+              {errors.password && (
+                <FormHelperText error>
+                  {errors.password.message}
+                </FormHelperText>
+              )}
+            </motion.div>
+
+            {/* Confirm Password */}
+            <motion.div>
+              <TextField
+                fullWidth
+                type="password"
+                placeholder="Confirm Password"
+                {...register("confirmPassword", {
+                  required: "Confirm Password is required",
+                  validate: (value, formValues) =>
+                    value === formValues.password ||
+                    "Passwords don't match",
+                })}
+              />
+
+              {errors.confirmPassword && (
+                <FormHelperText error>
+                  {errors.confirmPassword.message}
+                </FormHelperText>
+              )}
+            </motion.div>
+          </MotionConfig>
+
+          {/* Signup button */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 1 }}
+          >
+            <LoadingButton
+              sx={{
+                height: "2.5rem",
+              }}
+              fullWidth
+              loading={status === "pending"}
+              type="submit"
+              variant="contained"
+            >
+              Signup
+            </LoadingButton>
+          </motion.div>
+
+          {/* Links */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap-reverse"
+            gap={1}
+          >
+            <MotionConfig
+              whileHover={{ x: 2 }}
+              whileTap={{ scale: 1.05 }}
+            >
+              <motion.div>
+                <Typography
+                  component={Link}
+                  to="/forgot-password"
+                  sx={{
+                    textDecoration: "none",
+                    color: "text.primary",
+                  }}
+                >
+                  Forgot password
+                </Typography>
+              </motion.div>
+
+              <motion.div>
+                <Typography
+                  component={Link}
+                  to="/login"
+                  sx={{
+                    textDecoration: "none",
+                    color: "text.primary",
+                  }}
+                >
+                  Already a member?{" "}
+                  <span
+                    style={{
+                      color: theme.palette.primary.dark,
+                    }}
+                  >
+                    Login
+                  </span>
+                </Typography>
+              </motion.div>
+            </MotionConfig>
+          </Stack>
+        </Stack>
+      </Stack>
+    </Stack>
+  );
+};
+
+*
