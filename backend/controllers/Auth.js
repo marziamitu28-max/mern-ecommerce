@@ -39,7 +39,7 @@ exports.signup=async(req,res)=>{
         })
 
         res.status(201).json(sanitizeUser(createdUser))
-
+    }
     } catch (error) {
         console.log(error);
         res.status(500).json({message:"Error occured during signup, please try again later"})
