@@ -59,15 +59,9 @@ const handleSignup=(data)=>{
   }
   return (
     <Stack width={'100vw'} height={'100vh'} flexDirection={'row'} sx={{overflowY:"hidden"}}>
-
-      {
-          return (
       <Stack bgcolor={'black'} flex={1} justifyContent={'center'} >
           <Lottie animationData={ecommerceOutlookAnimation}/>
         </Stack>
-        
-        }
-
         <Stack flex={1} justifyContent={'center'} alignItems={'center'}>
 
               <Stack flexDirection={'row'} justifyContent={'center'} alignItems={'center'}>
@@ -126,4 +120,3 @@ const handleSignup=(data)=>{
         </Stack>
     </Stack>
   )
-}
